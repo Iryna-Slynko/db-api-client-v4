@@ -46,6 +46,7 @@ function saveAuthResult (result) {
   sessionStorage.setItem('accessToken', result.accessToken);
   sessionStorage.setItem('idToken', result.idToken);
   sessionStorage.setItem('expirationDate', Date.now() + Number.parseInt(result.expiresIn) * 1000);
+  // Refresh the page
   checkStatus();
 }
 
