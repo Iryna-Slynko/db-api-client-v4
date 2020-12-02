@@ -134,12 +134,14 @@ async function loadProducts() {
     // Get a list of categories via the getDataAsync(url) function
     const categories = await getDataAsync(`${BASE_URL}/category`);
     // Call displaycategoriess(), passing the retrieved categories list
-    displayCategories(categories);
+    if (categories != null)
+      displayCategories(categories);
 
     // Get a list of products
     const products = await getDataAsync(`${BASE_URL}/product`);
     // Call displayProducts(), passing the retrieved products list
-    displayProducts(products);
+    if (products != null)
+      displayProducts(products);
 
   } // catch and log any errors
       catch (err) {
@@ -153,7 +155,9 @@ async function updateProductsView(id) {
     // call the API enpoint which retrieves products by category (id)
     const products = await getDataAsync(`${BASE_URL}/product/bycat/${id}`);
     // Display the list of products returned by the API
-    displayProducts(products);
+    if (products != null) {
+      displayProducts(products);
+    }
 
   } // catch and log any errors
   catch (err) {
