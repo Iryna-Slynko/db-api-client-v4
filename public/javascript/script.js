@@ -2,8 +2,9 @@
 // API Base URL - the server address
 const BASE_URL = `http://localhost:8080`;
 
-let getHeaders = () => {
-
+function getHeaders() {
+  // Return headers
+  // Note that the access token is set in the Authorization: Bearer
   return new Headers({
     "Accept": "application/json",
     "Content-Type": "application/json",
@@ -13,13 +14,6 @@ let getHeaders = () => {
 
 // Asynchronous Function getDataAsync from a url and return
 async function getDataAsync(url) {
-
-  // The set HTTP headers. These will be used by Fetch when making requests to the api
-  /*const HTTP_REQ_HEADERS = new Headers({
-    "Accept": "application/json",
-    "Content-Type": "application/json",
-    "Authorization": "Bearer " + getAccessToken()
-  });*/
 
   // Requests will use the GET method and permit cross origin requests
   const GET_INIT = { method: 'GET', credentials: 'include', headers: getHeaders(), mode: 'cors', cache: 'default' };

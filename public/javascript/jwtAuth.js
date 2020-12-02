@@ -1,44 +1,55 @@
-
+// Client url
 const clientUrl = "http://localhost:3000";
 
-function displayStatus () {
-  const accessToken = localStorage.getItem('accessToken');
-  const expirationDate = new Date(Number.parseInt(localStorage.getItem('expirationDate')));
+// check login status
+function checkStatus () {
+  // Get access tokem from browser sessionStorage
+  const accessToken = sessionStorage.getItem('accessToken');
+  // Check if expired
+  const expirationDate = new Date(Number.parseInt(sessionStorage.getItem('expirationDate')));
   const isExpired = expirationDate < new Date();
   let status;
 
+  // Log details to console
   if (!accessToken) {
-    status = 'There is no access token present in local storage, meaning that you are not logged in. <a href="#" onclick="checkSession()">Click here to attempt an SSO login</a>';
+    status = 'There is no access token present in local storage, meaning that you are not logged in.';
   } else if (isExpired) {
-    status = 'There is an expired access token in local storage. <a href="#" onclick="checkSession()">Click here to renew it</a>';
+    status = 'There is an expired access token in local storage.';
   } else {
-    status = `There is an access token in local storage, and it expires on ${expirationDate}. <a href="#" onclick="checkSession()">Click here to renew it</a>`;
+    status = `There is an access token in local storage, and it expires on ${expirationDate}.`;
   }
   console.log("status: ", status);
 
+  // If logged in
+  // Use jQuery to hide login then show logout and profile
   if (accessToken && !isExpired) {
     $('#login').hide();
     $('#logout').show();
     $('#get-profile').show();
-    loadProducts();
+  // else - not logged in
+  // Use jQuery to hide logout and profile then show login
   } else {
     $('#get-profile').hide();
     $('#logout').hide();
     $('#login').show();
   }
+  // (re)load products display to reflect change
+  loadProducts();
 }
-
+// Get access token (from session storage, etc.)
 function getAccessToken () {
-  return localStorage.getItem('accessToken');
+  return sessionStorage.getItem('accessToken');
 }
 
+// Save the token to session storage 
 function saveAuthResult (result) {
-  localStorage.setItem('accessToken', result.accessToken);
-  localStorage.setItem('idToken', result.idToken);
-  localStorage.setItem('expirationDate', Date.now() + Number.parseInt(result.expiresIn) * 1000);
-  displayStatus();
+  sessionStorage.setItem('accessToken', result.accessToken);
+  sessionStorage.setItem('idToken', result.idToken);
+  sessionStorage.setItem('expirationDate', Date.now() + Number.parseInt(result.expiresIn) * 1000);
+  checkStatus();
 }
 
+// Check token validity
 function checkSession () {
   auth0WebAuth.checkSession({
     responseType: 'token id_token',
@@ -46,8 +57,8 @@ function checkSession () {
     usePostMessage: true
   }, function (err, result) {
     if (err) {
-      alert(`Could not get a new token using silent authentication (${err.error}). Opening login page...`);
-      $('#app').hide();
+      console.log(`Could not get a new token using silent authentication (${err.error}).`);
+      $('#get-profile').hide();
       $('#logout').hide();
       $('#login').show();
     } else {
@@ -55,41 +66,41 @@ function checkSession () {
     }
   });
 }
-
-// Login
+// Login event handler
+// Call Auth0 to handle login (then return here)
 document.querySelector("#login").addEventListener("click", function(event) {
+  // Prevent form submission (if used in a form)
   event.preventDefault();
+  // Call the Auth0 authorize function
+  // auth0WebAuth is defined in auth0-variables.js
   auth0WebAuth.authorize({ returnTo: clientUrl });
   console.log("Logged in");
 }, false);
 
 // Logout
+// Call Auth0 to handle logout (then return here)
 document.querySelector("#logout").addEventListener("click", function(event) {
   event.preventDefault();
-  localStorage.clear();
+  // remove tokens from session storage
+  sessionStorage.clear();
   auth0WebAuth.logout({ returnTo: clientUrl });
   console.log("Logged out");
 }, false);
 
-// get profile
+// get user profile from Auth0 
 document.querySelector("#get-profile").addEventListener("click", async function(event) {
   event.preventDefault();
-
   auth0Authentication.userInfo(getAccessToken(), (err, usrInfo) => {
     if (err) {
           // handle error
       console.error('Failed to get userInfo');
       return;
     }
-
     // Output result to console (for testing purposes) 
     console.log(usrInfo);
     document.querySelector("#results pre").innerHTML = JSON.stringify(usrInfo, null, 2);
   });
-
 }, false);
-
-
 // When page is loaded
 window.onload = (event) => {
     // execute this code
@@ -98,9 +109,6 @@ window.onload = (event) => {
         saveAuthResult(result);
       }
     });
-  // kick off display status
-  displayStatus();
+  // check login status after page loads.
+  checkStatus();
 };
-
-
-
