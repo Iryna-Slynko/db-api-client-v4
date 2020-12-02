@@ -31,6 +31,7 @@ function checkStatus () {
   } else {
     $('#get-profile').hide();
     $('#logout').hide();
+    $('#AddProductButton').hide();
     $('#login').show();
   }
   // (re)load products display to reflect change

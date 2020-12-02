@@ -58,6 +58,13 @@ function displayProducts(products) {
       // check user permissions
       const showUpdate = checkAuth(UPDATE_PRODUCT);
       const showDelete = checkAuth(DELETE_PRODUCT);
+      
+      // Show add product button
+      if (checkAuth(CREATE_PRODUCT))
+        $('#AddProductButton').show();
+      else
+      $('#AddProductButton').hide();
+
       // generate row
       let row = `<tr>
               <td>${product.ProductId}</td>
