@@ -54,18 +54,31 @@ function displayProducts(products) {
     const rows = products.map(product => {
       // returns a template string for each product, values are inserted using ${ }
       // <tr> is a table row and <td> a table division represents a column
-  
-        let row = `<tr>
-                <td>${product.ProductId}</td>
-                <td>${product.ProductName}</td>
-                <td>${product.ProductDescription}</td>
-                <td>${product.ProductStock}</td>
-                <td class="price">&euro;${Number(product.ProductPrice).toFixed(2)}</td>
-                <td><button class="btn btn-xs" data-toggle="modal" data-target="#ProductFormDialog" onclick="prepareProductUpdate(${product.ProductId})"><span class="oi oi-pencil" data-toggle="tooltip" title="Edit Product"></span></button></td>
-                <td><button class="btn btn-xs" onclick="deleteProduct(${product.ProductId})"><span class="oi oi-trash" data-toggle="tooltip" title="Delete Product"></span></button></td>
-                </tr>`;
 
-        return row;       
+      // check user permissions
+      const showUpdate = checkAuth(UPDATE_PRODUCT);
+      const showDelete = checkAuth(DELETE_PRODUCT);
+      // generate row
+      let row = `<tr>
+              <td>${product.ProductId}</td>
+              <td>${product.ProductName}</td>
+              <td>${product.ProductDescription}</td>
+              <td>${product.ProductStock}</td>
+              <td class="price">&euro;${Number(product.ProductPrice).toFixed(2)}</td>`;
+
+      // if user has permission to update - add the edit button
+      if (showUpdate)
+        row += `<td><button class="btn btn-xs" data-toggle="modal" 
+                data-target="#ProductFormDialog" onclick="prepareProductUpdate(${product.ProductId})">
+                <span class="oi oi-pencil" data-toggle="tooltip" title="Edit Product"></span></button></td>`
+      // if user has permission to delete - add the delete button          
+      if (showDelete)
+        row += `<td><button class="btn btn-xs" onclick="deleteProduct(${product.ProductId})">
+                <span class="oi oi-trash" data-toggle="tooltip" title="Delete Product"></span></button></td>`
+      
+      // finally, end the row and return
+      row += '</tr>';
+      return row;       
     });
     // Set the innerHTML of the productRows root element = rows
     // Why use join('') ???

@@ -102,6 +102,22 @@ document.querySelector("#get-profile").addEventListener("click", async function(
     document.querySelector("#results pre").innerHTML = JSON.stringify(usrInfo, null, 2);
   });
 }, false);
+
+// use jwt-decode to check if jwt contains a permission for the user
+// return true or false
+function checkAuth(permission) {
+  // read the JWT
+  const jwt = getAccessToken();
+  // check permissions (if a jwt was returned)
+  if (jwt != null) {
+    const decoded = jwt_decode(jwt);
+    return decoded.permissions.includes(permission);
+  } else {
+    return false;
+  }
+}
+
+
 // When page is loaded
 window.onload = (event) => {
     // execute this code
