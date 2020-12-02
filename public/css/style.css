@@ -9,4 +9,7 @@ display: block;
 .navbar {
 min-height: 115px;
 }
-  
+
+.link-icon {
+    margin-right: 0.3em;
+}
